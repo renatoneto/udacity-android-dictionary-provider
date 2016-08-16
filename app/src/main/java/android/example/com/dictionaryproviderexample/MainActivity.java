@@ -42,5 +42,22 @@ public class MainActivity extends ActionBarActivity {
 
         // Get a Cursor containing all of the rows in the Words table
         Cursor cursor = resolver.query(UserDictionary.Words.CONTENT_URI, null, null, null, null);
+
+        try {
+
+            dictTextView.setText("The UserDictionary contains ");
+
+            int wordColumn = cursor.getColumnIndex(Words.WORD);
+
+            while (cursor.moveToNext()) {
+
+                String word = cursor.getString(wordColumn);
+                dictTextView.append(("\n" + word));
+
+            }
+
+        } finally {
+            cursor.close();
+        }
     }
 }
