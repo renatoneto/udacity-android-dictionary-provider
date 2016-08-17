@@ -20,8 +20,10 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.UserDictionary;
 import android.provider.UserDictionary.Words;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
-import android.widget.TextView;
+import android.widget.ListView;
+
 
 /**
  * This is the central activity for the Provider Dictionary Example App. The purpose of this app is
@@ -34,8 +36,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Get the TextView which will be populated with the Dictionary ContentProvider data.
-        TextView dictTextView = (TextView) findViewById(R.id.dictionary_text_view);
+        ListView dictListView = (ListView) findViewById(R.id.dictionary_list_view);
 
         // Get the ContentResolver which will send a message to the ContentProvider
         ContentResolver resolver = getContentResolver();
@@ -43,21 +44,15 @@ public class MainActivity extends ActionBarActivity {
         // Get a Cursor containing all of the rows in the Words table
         Cursor cursor = resolver.query(UserDictionary.Words.CONTENT_URI, null, null, null, null);
 
-        try {
+        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
+                this,
+                android.R.layout.two_line_list_item,
+                cursor,
+                new String[] {Words.WORD, Words.FREQUENCY},
+                new int[] {android.R.id.text1, android.R.id.text2},
+                0
+        );
 
-            dictTextView.setText("The UserDictionary contains ");
-
-            int wordColumn = cursor.getColumnIndex(Words.WORD);
-
-            while (cursor.moveToNext()) {
-
-                String word = cursor.getString(wordColumn);
-                dictTextView.append(("\n" + word));
-
-            }
-
-        } finally {
-            cursor.close();
-        }
+        dictListView.setAdapter(simpleCursorAdapter);
     }
 }
